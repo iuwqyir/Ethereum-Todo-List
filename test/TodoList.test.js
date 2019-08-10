@@ -22,4 +22,15 @@ contract('TodoList', (accounts) => {
 		assert.equal(todoItem.isCompleted, false);
 		assert.equal(todoItemCount.toNumber(), 1);
 	});
+
+	it('creates tasks', async () => {
+		const result = await this.todoList.createTodoItem('Go shopping', 'Buy apples & oranges');
+		const todoCount = await this.todoList.todoItemCount();
+		assert.equal(todoCount, 2);
+		const event = result.logs[0].args;
+		assert.equal(event.id.toNumber(), 1);
+		assert.equal(event.title, 'Go shopping');
+		assert.equal(event.content, 'Buy apples & oranges');
+		assert.equal(event.isCompleted, false);
+	});
 });
