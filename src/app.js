@@ -94,6 +94,14 @@ App = {
 
 	},
 
+	createTodoItem: async () => {
+		App.setLoading(true);
+		const title = $('#newTodoItemTitle').val();
+		const content = $('#newTodoItemContent').val();
+		await App.todoList.createTodoItem(title, content);
+		window.location.reload();
+	},
+
 	setLoading: (boolean) => {
 		App.loading = boolean;
 		const loader = $('#loader');
