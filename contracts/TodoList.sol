@@ -13,7 +13,7 @@ contract TodoList {
 	uint public todoItemCount = 0;
 	mapping (uint => TodoItem) public todoItems;
 
-	event TaskCreated(
+	event TodoItemCreated(
 		uint id,
 		string title,
 		string content,
@@ -26,7 +26,7 @@ contract TodoList {
 
 	function createTodoItem(string memory _title, string memory _content) public {
 		todoItems[todoItemCount] = TodoItem(todoItemCount, _title, _content, false);
-		emit TaskCreated(todoItemCount, _title, _content, false);
+		emit TodoItemCreated(todoItemCount, _title, _content, false);
 		todoItemCount++;
 	}
 }
