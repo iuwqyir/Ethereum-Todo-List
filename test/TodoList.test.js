@@ -14,19 +14,23 @@ contract('TodoList', (accounts) => {
 	});
 
 	it('lists todo items', async () => {
+		const newItemIndex = await this.todoList.newItemIndex();
 		const todoItemCount = await this.todoList.todoItemCount();
-		const todoItem = await this.todoList.todoItems(todoItemCount - 1);
-		assert.equal(todoItem.id.toNumber() + 1, todoItemCount.toNumber());
+		const todoItem = await this.todoList.todoItems(newItemIndex - 1);
+		assert.equal(todoItem.id.toNumber() + 1, newItemIndex.toNumber());
 		assert.equal(todoItem.title, 'MyFirstTodoItem');
 		assert.equal(todoItem.content, 'Do it fast!');
 		assert.equal(todoItem.isCompleted, false);
+		assert.equal(newItemIndex.toNumber(), 1);
 		assert.equal(todoItemCount.toNumber(), 1);
 	});
 
 	it('creates todo items', async () => {
 		const result = await this.todoList.createTodoItem('Go shopping', 'Buy apples & oranges');
-		const todoCount = await this.todoList.todoItemCount();
-		assert.equal(todoCount, 2);
+		const newItemIndex = await this.todoList.newItemIndex();
+		const todoItemCount = await this.todoList.todoItemCount();
+		assert.equal(newItemIndex.toNumber(), 2);
+		assert.equal(todoItemCount.toNumber(), 2);
 		const event = result.logs[0].args;
 		assert.equal(event.id.toNumber(), 1);
 		assert.equal(event.title, 'Go shopping');
@@ -41,5 +45,13 @@ contract('TodoList', (accounts) => {
 		const event = result.logs[0].args;
 		assert.equal(event.id.toNumber(), 1);
 		assert.equal(event.completed, true);
+	});
+
+	it('deletes todo item', async () => {
+		const result = await this.todoList.deleteTodoItem(1);
+		const todoItemCount = await this.todoList.todoItemCount();
+		const newItemIndex = await this.todoList.newItemIndex();
+		assert.equal(newItemIndex.toNumber(), 2);
+		assert.equal(todoItemCount.toNumber(), 1);
 	});
 });

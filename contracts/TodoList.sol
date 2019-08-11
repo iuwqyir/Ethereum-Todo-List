@@ -10,6 +10,7 @@ contract TodoList {
 		string content;
 		bool isCompleted;
 	}
+	uint public newItemIndex = 0;
 	uint public todoItemCount = 0;
 	mapping (uint => TodoItem) public todoItems;
 
@@ -30,8 +31,9 @@ contract TodoList {
 	}
 
 	function createTodoItem(string memory _title, string memory _content) public {
-		todoItems[todoItemCount] = TodoItem(todoItemCount, _title, _content, false);
-		emit TodoItemCreated(todoItemCount, _title, _content, false);
+		todoItems[newItemIndex] = TodoItem(newItemIndex, _title, _content, false);
+		emit TodoItemCreated(newItemIndex, _title, _content, false);
+		newItemIndex++;
 		todoItemCount++;
 	}
 
@@ -40,6 +42,11 @@ contract TodoList {
 		_item.isCompleted = !_item.isCompleted;
 		todoItems[_id] = _item;
 		emit TodoItemToggled(_id, _item.isCompleted);
+	}
+
+	function deleteTodoItem(uint _id) public {
+		delete todoItems[_id];
+		todoItemCount--;
 	}
 }
 

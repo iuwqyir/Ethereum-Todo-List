@@ -65,15 +65,19 @@ App = {
 	},
 
 	renderTodoItems: async () => {
-		const todoCount = await App.todoList.todoItemCount();
+		const maxIndex = await App.todoList.newItemIndex();
 		const $todoTemplate = $('.todoTemplate');
 
-		for (var i = 0; i < todoCount; i++) {
+		for (var i = 0; i < maxIndex; i++) {
 			const todoItem = await App.todoList.todoItems(i);
 			const id = todoItem[0].toNumber();
 			const title = todoItem[1];
 			const content = todoItem[2];
 			const isCompleted = todoItem[3];
+			
+			if(title.length == 0 && content.length == 0) {
+				continue;
+			}
 			
 			const $newTodoTemplate = $todoTemplate.clone();
 			$newTodoTemplate.find('.todo-title').html(title);
@@ -81,8 +85,10 @@ App = {
 			$newTodoTemplate.find('input')
 							.prop('name', id)
 							.prop('checked', isCompleted)
-							.on('click', App.toggleCompleted)
-			
+							.on('click', App.toggleCompleted);
+			$newTodoTemplate.find('button')
+							.prop('todoId', id)
+							.on('click', App.deleteTodoItem);
 			if (isCompleted) {
 				$('#completedTodoList').append($newTodoTemplate);
 			} else {
@@ -106,6 +112,13 @@ App = {
 		App.setLoading(true);
 		const itemId = e.target.name;
 		await App.todoList.toggleCompleted(itemId);
+		window.location.reload();
+	},
+
+	deleteTodoItem: async (e) => {
+		App.setLoading(true);
+		const itemId = e.target.todoId;
+		await App.todoList.deleteTodoItem(itemId);
 		window.location.reload();
 	},
 
